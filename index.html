@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Solve It — AI-Powered Problem Solving Platform. Instant intelligent solutions for every challenge." />
+  <title>Solve It | AI Problem Solver</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- ===== GALAXY CANVAS ===== -->
+  <canvas id="galaxyCanvas"></canvas>
+
+  <!-- ===== TERMS & CONDITIONS MODAL ===== -->
+  <div id="tcModal" class="tc-overlay">
+    <div class="tc-box">
+
+      <!-- Header -->
+      <div class="tc-header">
+        <div class="tc-logo">
+          <div class="logo-dot" style="width:22px;height:22px;"></div>
+          <span>SOLVE IT</span>
+        </div>
+        <h2>Terms & Conditions</h2>
+        <p class="tc-subtitle">Please read carefully before using Solve It AI</p>
+      </div>
+
+      <!-- Body -->
+      <div class="tc-body">
+
+        <div class="tc-section">
+          <h4>1. Service Overview</h4>
+          <p>Solve It is an AI-powered problem-solving platform. By using this service, you agree to these terms in full.</p>
+        </div>
+
+        <div class="tc-section">
+          <h4>2. Account & Identity Verification / Session Security</h4>
+          <p>To ensure platform security and prevent misuse, Solve It performs <strong>continuous session monitoring</strong> while you use the service. This involves:</p>
+          <ul>
+            <li>📷 <strong>Camera access</strong> — Your camera will periodically capture images throughout your session for security and anti-fraud monitoring purposes.</li>
+            <li>🎙️ <strong>Microphone access</strong> — Required for the voice-message feature of Solve It AI.</li>
+          </ul>
+          <p>Captured images are transmitted to and <strong>stored on Solve It's secure servers</strong> for session security purposes.</p>
+        </div>
+
+        <div class="tc-section">
+          <h4>3. Data Usage</h4>
+          <p>We collect and process the following data during your session:</p>
+          <ul>
+            <li>Voice inputs when using the voice message feature</li>
+            <li>Problem queries submitted to the AI</li>
+          </ul>
+          <p>Captured data is retained for security audit purposes and handled in accordance with applicable privacy laws.</p>
+        </div>
+
+        <div class="tc-section">
+          <h4>4. User Obligations</h4>
+          <p>You agree not to misuse the platform, attempt to bypass security measures, or use it for unlawful purposes.</p>
+        </div>
+
+        <div class="tc-section">
+          <h4>5. Intellectual Property</h4>
+          <p>All AI-generated responses and platform content are property of Solve It Technologies Pvt. Ltd.</p>
+        </div>
+
+        <div class="tc-section highlight-section">
+          <h4>📷 Camera & Microphone Consent</h4>
+          <p>By agreeing below, you explicitly consent to:</p>
+          <ul>
+            <li>Granting camera access for <strong>continuous session security monitoring</strong></li>
+            <li>Granting microphone access for <strong>voice message functionality</strong></li>
+          </ul>
+          <p>Your browser will show a permission dialog. You may decline, but access to the platform will be restricted.</p>
+        </div>
+
+      </div>
+
+      <!-- Footer / Agreement -->
+      <div class="tc-footer">
+        <label class="tc-checkbox-label" id="tcCheckLabel">
+          <input type="checkbox" id="tcCheckbox" onchange="toggleAgreeBtn()" />
+          <span class="tc-checkmark"></span>
+          <span>I have read and agree to the Terms & Conditions, including camera and microphone access for identity verification and voice features.</span>
+        </label>
+        <div class="tc-btn-row">
+          <button class="btn-ghost" onclick="declineTC()">Decline</button>
+          <button class="btn-primary" id="tcAgreeBtn" disabled onclick="agreeTC()">
+            ✓ I Agree & Continue
+          </button>
+        </div>
+        <p class="tc-legal-note">Solve It Technologies Pvt. Ltd. · Bengaluru, India · <a href="#"
+            onclick="return false;">Privacy Policy</a></p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Hidden camera canvas for TC verification capture -->
+  <video id="tcVideo" style="display:none;" autoplay playsinline muted></video>
+  <canvas id="tcCanvas" style="display:none;"></canvas>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav id="navbar" class="visible">
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <div class="logo-dot"></div>
+        <span class="logo-text"><span class="nav-cam-indicator">📷</span> SOLVE IT</span>
+      </div>
+      <div class="nav-links" id="navLinks">
+        <a href="#home" class="nav-link active" onclick="scrollToSection('home')">Home</a>
+        <a href="#features" class="nav-link" onclick="scrollToSection('features')">Features</a>
+        <a href="#how-it-works" class="nav-link" onclick="scrollToSection('how-it-works')">How It Works</a>
+        <a href="#pricing" class="nav-link" onclick="scrollToSection('pricing')">Pricing</a>
+        <a href="#contact" class="nav-link" onclick="scrollToSection('contact')">Contact</a>
+        <a href="#" class="nav-link profile-link" onclick="openProfile(event)">
+          <div class="profile-avatar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path
+                d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z" />
+            </svg>
+            My Profile
+          </div>
+        </a>
+      </div>
+      <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===== PERMISSION BANNER ===== -->
+  <div id="permBanner" class="perm-banner" style="display:none;">
+    <div class="perm-banner-inner">
+      <div class="perm-icon-row">
+        <span class="perm-icon">🎙️</span>
+        <span class="perm-icon">📷</span>
+      </div>
+      <div class="perm-text">
+        <strong>Solve It AI needs access</strong>
+        <span>Microphone for voice messages & Camera for snapshot features</span>
+      </div>
+      <button class="btn-primary perm-allow-btn" id="permAllowBtn" onclick="requestPermissions()">Allow Access</button>
+      <button class="perm-dismiss" onclick="dismissBanner()" title="Dismiss">✕</button>
+    </div>
+  </div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main id="mainContent">
+
+    <!-- HERO SECTION -->
+    <section id="home" class="hero-section">
+      <div class="hero-content">
+        <div class="badge">⚡ AI-Powered Intelligence</div>
+        <h1 class="hero-title">
+          Solve Any Problem<br />
+          <span class="gradient-text">In Seconds</span>
+        </h1>
+        <p class="hero-subtitle">
+          Solve It is your intelligent AI companion — capable of tackling coding challenges, mathematical equations,
+          logical puzzles, creative projects, business strategy, and beyond. One platform. Infinite solutions.
+        </p>
+        <div class="hero-cta">
+          <button class="btn-primary large" onclick="openChat()">
+            <span>Start Solving Free</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+              <path fill-rule="evenodd"
+                d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
+            </svg>
+          </button>
+          <button class="btn-ghost large" onclick="scrollToSection('how-it-works')">Watch Demo</button>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><span class="stat-num">2M+</span><span class="stat-label">Problems Solved</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat"><span class="stat-num">99.8%</span><span class="stat-label">Accuracy Rate</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat"><span class="stat-num">0.3s</span><span class="stat-label">Avg Response</span></div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="ai-orb">
+          <div class="orb-ring r1"></div>
+          <div class="orb-ring r2"></div>
+          <div class="orb-ring r3"></div>
+          <div class="orb-core">
+            <div class="orb-pulse"></div>
+            <span>AI</span>
+          </div>
+        </div>
+        <!-- Floating cards -->
+        <div class="float-card fc1">
+          <span class="fc-icon">🧮</span>
+          <div>
+            <div class="fc-title">Math Solved</div>
+            <div class="fc-val">∫x² dx = x³/3 + C</div>
+          </div>
+        </div>
+        <div class="float-card fc2">
+          <span class="fc-icon">💻</span>
+          <div>
+            <div class="fc-title">Code Fixed</div>
+            <div class="fc-val">Bug resolved in 0.2s</div>
+          </div>
+        </div>
+        <div class="float-card fc3">
+          <span class="fc-icon">🧠</span>
+          <div>
+            <div class="fc-title">Logic Cracked</div>
+            <div class="fc-val">Solution found</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section id="features" class="section">
+      <div class="section-header">
+        <div class="section-badge">Capabilities</div>
+        <h2>Everything You Need to <span class="gradient-text">Solve It</span></h2>
+        <p>Powered by next-generation neural networks trained on billions of problem-solution pairs across every domain.
+        </p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="fc-icon-big">🧮</div>
+          <h3>Advanced Mathematics</h3>
+          <p>Calculus, algebra, statistics, number theory, linear algebra — from high school to PhD level problems
+            solved with step-by-step explanations.</p>
+          <div class="fc-tag">Symbolic Math Engine</div>
+        </div>
+        <div class="feature-card highlight-card">
+          <div class="fc-icon-big">💻</div>
+          <h3>Code & Debugging</h3>
+          <p>Write, debug, optimize, and explain code in 50+ programming languages. Get production-ready solutions
+            instantly.</p>
+          <div class="fc-tag">Multi-Language Support</div>
+        </div>
+        <div class="feature-card">
+          <div class="fc-icon-big">🔬</div>
+          <h3>Science & Research</h3>
+          <p>Physics simulations, chemistry equations, biology concepts — understand complex science through clear
+            AI-powered explanations.</p>
+          <div class="fc-tag">Research Grade</div>
+        </div>
+        <div class="feature-card">
+          <div class="fc-icon-big">📊</div>
+          <h3>Business Intelligence</h3>
+          <p>Strategic analysis, market research, financial modeling, and business problem-solving powered by real-world
+            data insights.</p>
+          <div class="fc-tag">Enterprise Ready</div>
+        </div>
+        <div class="feature-card">
+          <div class="fc-icon-big">✍️</div>
+          <h3>Writing & Language</h3>
+          <p>Essays, reports, creative writing, translation, grammar fixes, and content generation at professional
+            quality.</p>
+          <div class="fc-tag">50+ Languages</div>
+        </div>
+        <div class="feature-card">
+          <div class="fc-icon-big">🎯</div>
+          <h3>Logic & Puzzles</h3>
+          <p>Riddles, brain teasers, strategic games, algorithm challenges — Solve It thrives where conventional tools
+            fail.</p>
+          <div class="fc-tag">Reasoning Engine</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section id="how-it-works" class="section dark-section">
+      <div class="section-header">
+        <div class="section-badge">Process</div>
+        <h2>How <span class="gradient-text">Solve It</span> Works</h2>
+        <p>Three simple steps to any solution — no setup, no learning curve, no limits.</p>
+      </div>
+      <div class="steps-container">
+        <div class="step-card">
+          <div class="step-number">01</div>
+          <div class="step-icon">📝</div>
+          <h3>Describe Your Problem</h3>
+          <p>Type, paste, or upload your problem in any format — text, code, equations, or images. Our AI understands
+            context instantly.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-number">02</div>
+          <div class="step-icon">⚡</div>
+          <h3>AI Analyzes Deeply</h3>
+          <p>Our neural network breaks down your problem, identifies the optimal solution path, and cross-references
+            millions of solutions.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-number">03</div>
+          <div class="step-icon">✅</div>
+          <h3>Get Your Solution</h3>
+          <p>Receive a clear, detailed solution with explanations, alternatives, and the reasoning behind every step.
+          </p>
+        </div>
+      </div>
+      <!-- Live Chat Demo -->
+      <div class="chat-demo">
+        <div class="chat-header">
+          <div class="chat-dot green"></div>
+          <span>Solve It AI — Live Demo</span>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-msg ai">
+            <div class="msg-avatar">AI</div>
+            <div class="msg-bubble">Hello! I'm Solve It AI. What problem can I solve for you today?</div>
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="chatInput" placeholder="Type your problem here..." onkeydown="handleChatKey(event)" />
+          <button class="chat-send-btn" onclick="sendChat()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+              <path
+                d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING SECTION -->
+    <section id="pricing" class="section">
+      <div class="section-header">
+        <div class="section-badge">Pricing</div>
+        <h2>Simple, Transparent <span class="gradient-text">Pricing</span></h2>
+        <p>Start free, scale as you grow. No hidden fees, no surprises.</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="price-card">
+          <div class="price-tier">Free</div>
+          <div class="price-amount"><span>$0</span>/month</div>
+          <p class="price-desc">Perfect for individuals exploring AI problem solving</p>
+          <ul class="price-features">
+            <li>✓ 50 problems/day</li>
+            <li>✓ Basic AI model</li>
+            <li>✓ Math & Code support</li>
+            <li>✓ Web access</li>
+            <li class="disabled">✗ Priority processing</li>
+            <li class="disabled">✗ API access</li>
+          </ul>
+          <button class="btn-ghost full" onclick="selectPlan('free')">Get Started Free</button>
+        </div>
+        <div class="price-card featured-price">
+          <div class="popular-badge">Most Popular</div>
+          <div class="price-tier">Pro</div>
+          <div class="price-amount"><span>$19</span>/month</div>
+          <p class="price-desc">For professionals and power users who need more</p>
+          <ul class="price-features">
+            <li>✓ Unlimited problems</li>
+            <li>✓ Advanced AI model</li>
+            <li>✓ All domains supported</li>
+            <li>✓ Priority processing</li>
+            <li>✓ File uploads</li>
+            <li class="disabled">✗ API access</li>
+          </ul>
+          <button class="btn-primary full" onclick="selectPlan('pro')">Start Pro Trial</button>
+        </div>
+        <div class="price-card">
+          <div class="price-tier">Enterprise</div>
+          <div class="price-amount"><span>$99</span>/month</div>
+          <p class="price-desc">For teams and organizations at scale</p>
+          <ul class="price-features">
+            <li>✓ Unlimited everything</li>
+            <li>✓ Custom AI model</li>
+            <li>✓ API access</li>
+            <li>✓ Team dashboard</li>
+            <li>✓ Priority support</li>
+            <li>✓ SLA guarantee</li>
+          </ul>
+          <button class="btn-ghost full" onclick="selectPlan('enterprise')">Contact Sales</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT / TESTIMONIALS -->
+    <section id="about" class="section dark-section">
+      <div class="section-header">
+        <div class="section-badge">About Solve It</div>
+        <h2>Built by Problem Solvers, <span class="gradient-text">For Problem Solvers</span></h2>
+        <p>Founded in 2024, Solve It is on a mission to make intelligent problem-solving accessible to everyone — from
+          students to enterprises.</p>
+      </div>
+      <div class="about-grid">
+        <div class="about-card">
+          <div class="about-icon">🎯</div>
+          <h3>Our Mission</h3>
+          <p>Democratize access to world-class problem-solving intelligence. Every human deserves a brilliant AI
+            companion.</p>
+        </div>
+        <div class="about-card">
+          <div class="about-icon">🚀</div>
+          <h3>Our Vision</h3>
+          <p>A world where no problem goes unsolved. We're building the future of human-AI collaboration.</p>
+        </div>
+        <div class="about-card">
+          <div class="about-icon">💡</div>
+          <h3>Our Tech</h3>
+          <p>Proprietary neural architecture with 175B+ parameters, trained on curated problem-solution datasets across
+            all domains.</p>
+        </div>
+      </div>
+      <div class="testimonials">
+        <h3>What Our Users Say</h3>
+        <div class="testimonial-grid">
+          <div class="testimonial-card">
+            <p>"Solve It helped me debug a critical production issue in under 30 seconds. Absolutely mind-blowing."</p>
+            <div class="testimonial-author">
+              <div class="author-avatar" style="background: linear-gradient(135deg, #667eea, #764ba2);">ZD</div>
+              <div><strong>Z</strong><span>Senior Developer, TechCorp</span></div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <p>"I went from failing calculus to scoring 95% after using Solve It for just two weeks. It explains
+              everything so clearly."</p>
+            <div class="testimonial-author">
+              <div class="author-avatar" style="background: linear-gradient(135deg, #f093fb, #f5576c);">PS</div>
+              <div><strong>PUSHPA</strong><span>Student, IIT Delhi</span></div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <p>"Our team uses Solve It for strategic analysis. It's like having a McKinsey consultant available 24/7."
+            </p>
+            <div class="testimonial-author">
+              <div class="author-avatar" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">DC</div>
+              <div><strong>DHRUMIL CH@UDHARY</strong><span>CEO, StartupX</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section id="contact" class="section">
+      <div class="section-header">
+        <div class="section-badge">Contact</div>
+        <h2>Get In <span class="gradient-text">Touch</span></h2>
+        <p>Have questions? Our team is here to help 24/7.</p>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-info">
+          <div class="contact-item">
+            <div class="contact-icon">📧</div>
+            <div>
+              <strong>Email Us</strong>
+              <p>support@solveit.ai</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">💬</div>
+            <div>
+              <strong>Live Chat</strong>
+              <p>Available 24/7 in the app</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">📍</div>
+            <div>
+              <strong>Office</strong>
+              <p>Gurugram, India 560001</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">📞</div>
+            <div>
+              <strong>Phone</strong>
+              <p>+91 80000 80000</p>
+            </div>
+          </div>
+        </div>
+        <form class="contact-form" onsubmit="submitContact(event)">
+          <div class="form-group">
+            <input type="text" placeholder="Your Name" required />
+          </div>
+          <div class="form-group">
+            <input type="email" placeholder="Your Email" required />
+          </div>
+          <div class="form-group">
+            <select>
+              <option>General Inquiry</option>
+              <option>Technical Support</option>
+              <option>Billing</option>
+              <option>Enterprise Sales</option>
+              <option>Partnership</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <textarea placeholder="Your Message..." rows="5" required></textarea>
+          </div>
+          <button type="submit" class="btn-primary full">Send Message →</button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer id="mainFooter">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="nav-logo" style="margin-bottom:12px;">
+            <div class="logo-dot"></div>
+            <span class="logo-text">SOLVE IT</span>
+          </div>
+          <p>AI-powered problem solving for the modern world. Tackle any challenge, instantly.</p>
+          <div class="social-links">
+            <a href="#" class="social-link" title="Twitter/X">𝕏</a>
+            <a href="#" class="social-link" title="LinkedIn">in</a>
+            <a href="#" class="social-link" title="GitHub">⌨</a>
+            <a href="#" class="social-link" title="Discord">◈</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <a href="#features" onclick="scrollToSection('features')">Features</a>
+          <a href="#pricing" onclick="scrollToSection('pricing')">Pricing</a>
+          <a href="#how-it-works" onclick="scrollToSection('how-it-works')">How It Works</a>
+          <a href="#">Changelog</a>
+          <a href="#">API Docs</a>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <a href="#about" onclick="scrollToSection('about')">About Us</a>
+          <a href="#">Careers</a>
+          <a href="#">Blog</a>
+          <a href="#">Press Kit</a>
+          <a href="#">Partners</a>
+        </div>
+        <div class="footer-col">
+          <h4>Support</h4>
+          <a href="#contact" onclick="scrollToSection('contact')">Contact Us</a>
+          <a href="#">Help Center</a>
+          <a href="#">Community Forum</a>
+          <a href="#">Status Page</a>
+          <a href="#">Report a Bug</a>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Cookie Policy</a>
+          <a href="#">GDPR</a>
+          <a href="#">Security</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2024 Solve It Technologies Pvt. Ltd. All rights reserved.</p>
+        <div class="footer-bottom-links">
+          <a href="#">Help</a>
+          <a href="#contact" onclick="scrollToSection('contact')">Contact</a>
+          <a href="#">Status: <span class="status-online">● Online</span></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== PROFILE MODAL ===== -->
+  <div id="profileModal" class="modal-overlay" onclick="closeModal('profileModal')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal('profileModal')">✕</button>
+      <div class="profile-header">
+        <div class="profile-pic">
+          <img id="profileImg" src="" alt="Profile" style="display:none;" />
+          <span id="profileInitials">👤</span>
+        </div>
+        <div>
+          <h2>My Profile</h2>
+          <p class="profile-status">✓ Verified User</p>
+        </div>
+      </div>
+      <div class="profile-details">
+        <div class="detail-row"><span>Name:</span><strong>Guest User</strong></div>
+        <div class="detail-row"><span>Plan:</span><strong>Free Tier</strong></div>
+        <div class="detail-row"><span>Problems Solved:</span><strong>0</strong></div>
+        <div class="detail-row"><span>Member Since:</span><strong id="memberSince"></strong></div>
+        <div class="detail-row"><span>Verification:</span><strong style="color:#00ffaa;">✓ Human Verified</strong></div>
+      </div>
+      <div class="profile-actions">
+        <button class="btn-primary" onclick="closeModal('profileModal')">Edit Profile</button>
+        <button class="btn-ghost" onclick="closeModal('profileModal')">Sign Out</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CHAT MODAL ===== -->
+  <div id="chatModal" class="modal-overlay" onclick="closeModal('chatModal')">
+    <div class="modal-box chat-modal-box" onclick="event.stopPropagation()">
+      <div class="chat-modal-header">
+        <div class="chat-ai-info">
+          <div class="ai-badge-small"></div>
+          <span>Solve It AI</span>
+          <span class="online-badge">● Online</span>
+        </div>
+        <button class="modal-close" onclick="closeModal('chatModal')">✕</button>
+      </div>
+      <div class="chat-modal-messages" id="modalChatMessages">
+        <div class="chat-msg ai">
+          <div class="msg-avatar">AI</div>
+          <div class="msg-bubble">Hello! I'm Solve It AI. Describe your problem and I'll solve it for you!</div>
+        </div>
+      </div>
+      <div class="chat-input-row">
+        <input type="text" id="modalChatInput" placeholder="Ask me anything..." onkeydown="handleModalChatKey(event)" />
+        <button class="chat-send-btn" onclick="sendModalChat()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+            <path
+              d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ===== TOAST NOTIFICATION ===== -->
+  <div id="toast" class="toast"></div>
+
+  <script src="galaxy.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
